@@ -1,23 +1,19 @@
 var mongo = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/learnyoumongo";
+var arg = Number(process.argv[2]);
 
-var thedb = "";
-
-mongo.connect("mongodb://volv-fcc-mongo-2419035:8080/learnyoumongo", function(err, db) {
+mongo.connect(url, function(err, db) {
   if (err) {
-    console.log("VOLVOUTERERROR -", err);
+      db.close();
+      return console.log(err);
   }
   else {
-    thedb = db.collection('parrots');
-    var result = thedb.find()
-      .toArray(function(err, documents) {
-        if (err) {
-          console.log("VOLVINNERERROR -", err);      
-        }
-        else {
-          console.log(documents)
-        }
-      })
+    var coll = db.collection('parrots') ;
+    coll.find({'age': {$gt: arg}}).toArray(function(err, docs) {
+      if (err) return console.log(err);
+      console.log(docs);
       db.close();
+    });
   }
-  
 })
+
